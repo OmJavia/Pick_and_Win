@@ -5,7 +5,7 @@ const verifyToken = require("../Config/jwt");
 
 
 route.post("/addproduct",verifyToken,addproduct)
-route.post("/getproduct",verifyToken,getproduct)
+route.post("/getproduct",getproduct)
 route.post("/login", login)
 route.post("/signup", signup)
 route.post("/updateproduct",verifyToken, updateproduct)

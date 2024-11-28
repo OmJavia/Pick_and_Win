@@ -1,36 +1,73 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
-import products from '../products';
+import axios from 'axios'; // Import axios
 import BuyButton from '../components/BuyButton';
 
 function ProductPage() {
     const { id } = useParams();
-    const product = products.find((item) => item.id === id);
+    const [product, setProduct] = useState(null);
+    const [loading, setLoading] = useState(true); // To handle loading state
+    const [error, setError] = useState(null); // To handle error state
 
+    // Fetch product data on mount
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                const response = await axios.get(`http://localhost:4000/getproduct`, {
+                    params: { id: id }, // Send product ID as query parameter
+                });
+                setProduct(response.data); // Set the product data
+            } catch (error) {
+                setError('Error fetching product data');
+                console.error('Error fetching product data:', error);
+            } finally {
+                setLoading(false); // Set loading to false after the request completes
+            }
+        };
+
+        fetchProduct();
+    }, [id]); // Re-run the effect when the product ID changes
+
+    // If loading or error, show appropriate message
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+
+    if (error) {
+        return <p>{error}</p>;
+    }
+
+    // If product is not found, show a message
     if (!product) {
         return <p>Product not found.</p>;
     }
 
     return (
-        <Container className='mt-3'>
+        <Container className="mt-3">
             <Row>
-                <Col>
-                    <img src={product.image_url} alt={product.title} style={{ width: '100%' }} />
+                <Col md={6}>
+                    <img src={product.image_url} alt={product.title} className="img-fluid" />
                 </Col>
-                <Col>
-                    <Row>
+                <Col md={6}>
+                    <Row className="mb-3">
                         <h2>{product.title}</h2>
+                    </Row>
+                    <Row className="mb-3">
                         <p>{product.description}</p>
+                    </Row>
+                    <Row className="mb-3">
                         <p><strong>Price: ${product.price}</strong></p>
+                    </Row>
+                    <Row className="mb-3">
                         <p><strong>Quantity Available: {product.quantity}</strong></p>
                     </Row>
-                    <Row>
-                       <BuyButton/>
+                    <Row className="mb-3">
+                        <BuyButton />
                     </Row>
                 </Col>
             </Row>
-            <Row>
+            <Row className="mt-4">
                 <h3>HOW TO PLAY?</h3>
                 <ul>
                     <li>Purchase a ticket to enter the game and qualify for prize draws.</li>
@@ -46,4 +83,3 @@ function ProductPage() {
 }
 
 export default ProductPage;
-

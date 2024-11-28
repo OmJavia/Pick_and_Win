@@ -120,7 +120,7 @@ function signup(req,res) {
             }
             var salt = bcrypt.genSaltSync(10);
             var hash = bcrypt.hashSync(password, salt);
-            console.log(hash);
+            
             const insert = `INSERT INTO user(name, email, password) VALUES ('${name}', '${email}', '${hash}')`
             mysql.query(insert, (err,data,fields) => {
                 if (err) {
@@ -208,7 +208,6 @@ function updateproduct(req, res) {
     }
 }
 
-
 function orderplace(req, res) {
     try {
         const { product_id, user_id, quantity, payment_id } = req.body;
@@ -287,10 +286,6 @@ function orderplace(req, res) {
         return res.status(500).json({ msg: "Internal Server Error" });
     }
 }
-
-
-
-
 
 module.exports = {
     addproduct , getproduct, login, signup, deleteproduct, updateproduct, orderplace
